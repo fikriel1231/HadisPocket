@@ -6,16 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.fikrielg.hadispocket.core.constant.UiState
 import com.fikrielg.hadispocket.core.data.repository.MainRepository
 import com.fikrielg.hadispocket.core.model.Data
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(private val mainRepository: MainRepository): ViewModel(){
+class HomeViewModel (private val mainRepository: MainRepository): ViewModel(){
     private  val _listOfBooks = MutableStateFlow<List<Data>>(emptyList())
     val listOfBooks: StateFlow<List<Data>>
         get() = _listOfBooks

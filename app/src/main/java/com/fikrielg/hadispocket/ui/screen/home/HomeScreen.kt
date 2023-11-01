@@ -17,10 +17,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.fikrielg.hadispocket.core.constant.UiState
+import com.fikrielg.hadispocket.core.data.factory.ViewModelFactory
 import com.fikrielg.hadispocket.ui.component.BookItem
 import com.fikrielg.hadispocket.ui.component.ProgressBarComponent
 import com.fikrielg.hadispocket.ui.component.StateInfo
@@ -31,7 +32,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = viewModel(factory = ViewModelFactory.getInstance()),
     navController: NavHostController = rememberNavController()
 ) {
     val listOfBooks by homeViewModel.listOfBooks.collectAsState(initial = emptyList())

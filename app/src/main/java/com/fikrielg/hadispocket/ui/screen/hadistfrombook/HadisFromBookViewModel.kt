@@ -8,18 +8,14 @@ import com.fikrielg.hadispocket.core.constant.UiState
 import com.fikrielg.hadispocket.core.data.repository.MainRepository
 import com.fikrielg.hadispocket.core.model.Contents
 import com.fikrielg.hadispocket.core.model.Hadith
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-import javax.inject.Inject
-
 enum class HadisFromBookEvent { OnSearch, OnDefault }
 
-@HiltViewModel
-class HadisFromBookViewModel @Inject constructor(private val mainRepository: MainRepository) :
+class HadisFromBookViewModel(private val mainRepository: MainRepository) :
     ViewModel() {
     private val _listOfHadis = MutableStateFlow<List<Hadith>>(emptyList())
     val listOfHadis: StateFlow<List<Hadith>>

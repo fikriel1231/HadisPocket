@@ -37,11 +37,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.fikrielg.hadispocket.R
 import com.fikrielg.hadispocket.core.constant.UiState
+import com.fikrielg.hadispocket.core.data.factory.ViewModelFactory
 import com.fikrielg.hadispocket.ui.component.DetailHadisItem
 import com.fikrielg.hadispocket.ui.component.HadisItem
 import com.fikrielg.hadispocket.ui.component.ProgressBarComponent
@@ -53,7 +54,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HadisFromBookScreen(
-    hadisFromBookViewModel: HadisFromBookViewModel = hiltViewModel(),
+    hadisFromBookViewModel: HadisFromBookViewModel = viewModel(factory = ViewModelFactory.getInstance()),
     navController: NavHostController = rememberNavController(),
     name: String
 ) {
