@@ -13,27 +13,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-
-import com.fikrielg.hadispocket.navigation.AppRouter
-import com.fikrielg.hadispocket.navigation.Screen
+import com.fikrielg.hadispocket.ui.screen.destinations.HomeScreenDestination
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 import kotlinx.coroutines.delay
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun SplashScreen(
-    navController: NavHostController = rememberNavController()
+    navigator: DestinationsNavigator
 ) {
     LaunchedEffect(true) {
         delay(2500)
-        AppRouter.pushAndReplace(navController = navController, Screen.HomeScreen.route)
+        navigator.navigate(HomeScreenDestination)
     }
      Scaffold() {
         Column(

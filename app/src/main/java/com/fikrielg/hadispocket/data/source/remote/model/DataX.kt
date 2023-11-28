@@ -1,4 +1,4 @@
-package com.fikrielg.hadispocket.core.model
+package com.fikrielg.hadispocket.data.source.remote.model
 
 
 import com.google.gson.annotations.SerializedName

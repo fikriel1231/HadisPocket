@@ -12,20 +12,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.fikrielg.hadispocket.core.model.Data
-import com.fikrielg.hadispocket.navigation.AppRouter
-import com.fikrielg.hadispocket.navigation.Screen
+import com.fikrielg.hadispocket.data.source.remote.model.Data
 
 @Composable
 fun BookItem(
     book: Data,
-    navHostController: NavHostController
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 6.dp)
-            .clickable {AppRouter.push(navHostController, Screen.HadisFromBookScreen.createRoute(book.id))}
+            .clickable {
+                onClick()
+            }
     ) {
 
         Row(

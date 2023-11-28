@@ -1,42 +1,46 @@
 package com.fikrielg.hadispocket.ui.screen.home
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fikrielg.hadispocket.core.constant.UiState
-import com.fikrielg.hadispocket.core.data.repository.MainRepository
-import com.fikrielg.hadispocket.core.model.Data
-import kotlinx.coroutines.delay
+import com.fikrielg.hadispocket.data.repository.HadisRepository
+import com.fikrielg.hadispocket.data.source.remote.model.AllBooksResponse
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-class HomeViewModel (private val mainRepository: MainRepository): ViewModel(){
-    private  val _listOfBooks = MutableStateFlow<List<Data>>(emptyList())
-    val listOfBooks: StateFlow<List<Data>>
-        get() = _listOfBooks
+class HomeViewModel(
+    private val repository: HadisRepository,
+) : ViewModel() {
 
-    private val _listOfBooksState = MutableStateFlow(UiState.Empty)
-    val listOfBooksState: StateFlow<UiState>
-        get() = _listOfBooksState
+    private var _getAllBookState = MutableStateFlow<HomeState?>(HomeState.Loading)
+    var getAllBookState = _getAllBookState.asStateFlow().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        HomeState.Loading
+    )
 
-    fun getListOfBooks(){
+    fun getListOfBooks() {
         viewModelScope.launch() {
+            _getAllBookState.emit(HomeState.Loading)
             try {
-                _setListOfBooksState(UiState.Loading)
-                delay(1200)
-                val response = mainRepository.getAllBooks()
-                _listOfBooks.value = response.data
-                _setListOfBooksState(UiState.Success)
-            }catch (e: Exception){
+               _getAllBookState.emit(HomeState.Success(repository.getAllBooks()))
+            } catch (e: Exception) {
                 Log.d("Home Exception", "${e.message}")
-                _setListOfBooksState(UiState.Error)
+                _getAllBookState.emit(HomeState.Error(e.message.toString()))
             }
         }
     }
 
-    private fun _setListOfBooksState(value: UiState){
-        _listOfBooksState.value = value
-    }
+}
+
+
+sealed class HomeState {
+    object Loading : HomeState()
+    data class Error(val message:String) : HomeState()
+    data class Success(val list: AllBooksResponse) : HomeState()
 }

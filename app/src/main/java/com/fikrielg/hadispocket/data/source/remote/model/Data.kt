@@ -1,13 +1,11 @@
-package com.fikrielg.hadispocket.core.model
+package com.fikrielg.hadispocket.data.source.remote.model
 
 
 import com.google.gson.annotations.SerializedName
 
-data class DataXX(
+data class Data(
     @SerializedName("available")
     val available: Int,
-    @SerializedName("contents")
-    val contents: Contents,
     @SerializedName("id")
     val id: String,
     @SerializedName("name")

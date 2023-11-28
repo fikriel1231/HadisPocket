@@ -9,19 +9,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.fikrielg.hadispocket.R
 
-import com.fikrielg.hadispocket.core.model.Hadith
 
 @Composable
 fun HadisItem(
-    hadis: Hadith,
-    onTap: (String) -> Unit?
+    arab:String, number:Int, id:String,
+    onTap: (String) -> Unit?,
+    onTapShare: () -> Unit,
+    onTapCopy: () -> Unit?
 ) {
     Card(
         modifier = Modifier
@@ -37,11 +42,19 @@ fun HadisItem(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween
         ){
-            Text(text = hadis.number.toString())
+            Text(text = number.toString())
             Spacer(modifier = Modifier.width(10.dp))
             Column() {
-                Text(text = hadis.arab, textAlign = TextAlign.Right)
-                Text(text = hadis.id)
+                Text(text = arab, textAlign = TextAlign.Right)
+                Text(text = id)
+                Row() {
+                    IconButton(onClick = { onTapShare() }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_share_24), contentDescription = "Share Hadis")
+                    }
+                    IconButton(onClick = { onTapCopy() }) {
+                        Icon(painter = painterResource(id = R.drawable.baseline_content_copy_24), contentDescription = "Copy Hadis")
+                    }
+                }
             }
         }
 

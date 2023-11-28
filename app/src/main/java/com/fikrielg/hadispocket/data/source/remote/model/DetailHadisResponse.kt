@@ -1,13 +1,13 @@
-package com.fikrielg.hadispocket.core.model
+package com.fikrielg.hadispocket.data.source.remote.model
 
 
 import com.google.gson.annotations.SerializedName
 
-data class ListHadisFromBookResponse(
+data class DetailHadisResponse(
     @SerializedName("code")
     val code: Int,
     @SerializedName("data")
-    val `data`: DataX,
+    val `data`: DataXX,
     @SerializedName("error")
     val error: Boolean,
     @SerializedName("message")
