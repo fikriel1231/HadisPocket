@@ -4,36 +4,54 @@ package com.fikrielg.hadispocket.ui.screen.hadistfrombook
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import com.fikrielg.hadispocket.HadisPocketApplication
 import com.fikrielg.hadispocket.data.factory.viewModelFactory
+import com.fikrielg.hadispocket.data.source.local.kotpref.SharedPref
 import com.fikrielg.hadispocket.ui.component.ErrorMessage
 import com.fikrielg.hadispocket.ui.component.HadisItem
 import com.fikrielg.hadispocket.ui.component.ProgressBarComponent
 import com.fikrielg.hadispocket.ui.screen.hadistfrombook.HadisListViewModel.*
+import com.fikrielg.hadispocket.ui.theme.montserrat
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
 
 data class HadisListScreenNavArgs(
     val name: String,
@@ -54,76 +72,107 @@ fun HadisListScreen(
 ) {
 
     val hadisList = viewModel.hadisList.collectAsLazyPagingItems()
-    val hadisDetailState by viewModel.hadisDetailState.collectAsStateWithLifecycle()
     val bookName = viewModel.book
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
 
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
 
-//    val swipeRefreshState =
-//        rememberSwipeRefreshState(isRefreshing = hadisListState == HadisListState.Loading)
+    var fontSizeArab by remember { mutableStateOf(SharedPref.fontArabSize) }
+    var fontSizeIndonesia by remember { mutableStateOf(SharedPref.fontIdSize) }
+
+    fun onSliderValueChanged(value: Float, isArab: Boolean) {
+        if (isArab) {
+            fontSizeArab = value.coerceIn(12f, 30f)
+            SharedPref.fontArabSize = fontSizeArab
+        } else {
+            fontSizeIndonesia = value.coerceIn(12f, 30f)
+            SharedPref.fontIdSize = fontSizeArab
+        }
+    }
 
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Hadis ${bookName}") }
+                title = {
+                    Text(
+                        text = bookName,
+                        fontFamily = montserrat,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            showBottomSheet = true
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Setting",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                navigationIcon = {
+                                 IconButton(onClick = { navigator.popBackStack()}) {
+                                     Icon(
+                                         imageVector = Icons.Default.ArrowBack,
+                                         contentDescription = "Back",
+                                         tint = MaterialTheme.colorScheme.onBackground
+                                     )                                 }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(MaterialTheme.colorScheme.background)
             )
-        }
+        },
     ) {
+
+
         Column(
-            modifier = Modifier.padding(it)
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.background)
         ) {
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(80.dp)
-//                    .padding(12.dp),
-//                colors = CardDefaults.cardColors(containerColor = Color.DarkGray)
-//            ) {
-//                TextField(
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                    value = searchQuery,
-//                    onValueChange = {
-//                        searchQuery = it
-//                        viewModel.setHadisListEvent(HadisListEvent.OnSearch)
-//                        viewModel.getDetailOfHadis(name)
-//                    },
-//                    leadingIcon = {
-//                        IconButton(onClick = {
-//                            hadisFromBookViewModel.setHadisListEvent(HadisListEvent.OnSearch)
-//                            hadisFromBookViewModel.getDetailOfHadis(name, searchQuery)
-//                        }) {
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.baseline_search_24),
-//                                contentDescription = ""
-//                            )
-//                        }
-//                    },
-//                    trailingIcon = {
-//                        if (eventState == HadisListEvent.OnSearch || searchQuery != "") {
-//                            IconButton(onClick = {
-//                                hadisFromBookViewModel.setHadisListEvent(HadisListEvent.OnDefault)
-//                                searchQuery = ""
-//                                hadisFromBookViewModel.getDetailOfHadis(name)
-//                            }) {
-//                                Icon(
-//                                    imageVector = Icons.Rounded.Close,
-//                                    contentDescription = ""
-//                                )
-//                            }
-//                        }
-//                    },
-//                    placeholder = { Text("Search Hadis") },
-//                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent,
-//                    ),
-//                    singleLine = true
-//                )
-//            }
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    },
+                    sheetState = sheetState
+                ) {
+                    Column(modifier = Modifier.padding(10.dp)) {
+                        Text(text = "Arab Font Size")
+                        Slider(
+                            value = fontSizeArab,
+                            onValueChange = { value ->
+                                onSliderValueChanged(value, isArab = true)
+                            },
+                            valueRange = 12f..30f,
+                            steps = 19,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(text = "Indo Font Size")
+                        Slider(
+                            value = fontSizeIndonesia,
+                            onValueChange = { value ->
+                                onSliderValueChanged(value, isArab = false)
+                            },
+                            valueRange = 12f..30f,
+                            steps = 19,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+                }
+            }
+
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
                     hadisList.itemCount,
@@ -145,14 +194,22 @@ fun HadisListScreen(
                         arab = hadisItem!!.arab,
                         id = hadisItem.id,
                         number = hadisItem.number,
-                        onTap = {}, onTapCopy = {
-                            Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+                        onTapCopy = {
+                            Toast.makeText(
+                                context,
+                                "Copied to clipboard",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             clipboardManager.setText(
                                 AnnotatedString(
                                     "${hadisItem!!.arab}\n\n${hadisItem.id}\n$bookName no.${hadisItem.number}"
                                 )
                             )
-                        }, onTapShare = { context.startActivity(shareIntent) })
+                        },
+                        onTapShare = { context.startActivity(shareIntent) },
+                        fontArabSize = fontSizeArab,
+                        fontIdSize = fontSizeIndonesia
+                    )
                 }
                 when (hadisList.loadState.refresh) {
                     is LoadState.Error -> item {
@@ -160,7 +217,7 @@ fun HadisListScreen(
                             "ERR",
                             (hadisList.loadState.refresh as LoadState.Error).error.toString()
                         )
-                        ErrorMessage(message = "Error when fetching API")
+                        ErrorMessage(message = "Error when fetching API", onClick = {viewModel.hadisList})
                     }
 
                     is LoadState.Loading -> item {
@@ -172,53 +229,20 @@ fun HadisListScreen(
 
                 when (hadisList.loadState.append) {
                     is LoadState.Error -> item {
-                        ErrorMessage(message = "Error to fetch data")
+                        ErrorMessage(message = "Error to fetch data", onClick = {})
                     }
 
                     is LoadState.Loading -> item { ProgressBarComponent() }
                     else -> {}
                 }
             }
-
-//            SwipeRefresh(
-//                state = swipeRefreshState,
-//                onRefresh = { hadisFromBookViewModel.getDetailOfHadis(name) }
-//            ) {
-//                when (listOfHadisState) {
-//                    UiState.Loading -> ProgressBarComponent()
-//                    UiState.Error -> StateInfo(type = StateType.ERROR)
-//                    UiState.Empty -> StateInfo(type = StateType.EMPTY)
-//                    UiState.Success -> {
-//                        Column(
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//                            if (eventState != HadisListEvent.OnSearch && searchQuery.isEmpty()) {
-//                                LazyColumn(
-//                                    modifier = Modifier.padding(4.dp),
-//                                    contentPadding = PaddingValues(horizontal = 10.dp)
-//                                ) {
-//                                    items(listOfHadis) { hadis ->
-//                                        HadisItem(hadis = hadis, onTap = {
-//
-//                                        })
-//                                    }
-//                                }
-//                            }else{
-//                                AnimatedVisibility(visible = eventState == HadisListEvent.OnSearch) {
-//                                    DetailHadisItem(
-//                                        detailOfBook?.number ?: 0, detailOfBook?.arab ?: "",
-//                                        detailOfBook?.id ?: "", onTap = {})
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
         }
     }
 
 
 }
+
+
 
 
 

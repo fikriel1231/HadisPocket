@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.HadisPocket" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.HadisPocket" parent="android:Theme.Material.Light.NoActionBar"/>
+    <style name="Theme.HadisPocket.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logoapp</item>
+        <item name="windowSplashScreenBackground">#ffffff</item>
+        <item name="postSplashScreenTheme">@style/Theme.HadisPocket</item>
+    </style>
 </resources>

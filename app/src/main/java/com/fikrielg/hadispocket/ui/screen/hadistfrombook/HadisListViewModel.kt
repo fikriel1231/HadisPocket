@@ -39,9 +39,7 @@ class HadisListViewModel(
         name
     ).cachedIn(viewModelScope)
 
-    init {
-        Log.d("NAME", name)
-    }
+
 
     suspend fun getDetailOfHadis(number: String? = "") {
         when (_eventState.value) {

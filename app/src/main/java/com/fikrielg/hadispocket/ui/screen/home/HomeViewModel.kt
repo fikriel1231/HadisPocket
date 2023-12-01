@@ -1,7 +1,6 @@
 package com.fikrielg.hadispocket.ui.screen.home
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fikrielg.hadispocket.data.repository.HadisRepository
